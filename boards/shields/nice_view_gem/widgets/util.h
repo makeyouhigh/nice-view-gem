@@ -18,6 +18,9 @@
 struct status_state {
     uint8_t battery;
     bool charging;
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+    uint8_t peripheral_battery;
+    bool peripheral_charging;
 #if !IS_ENABLED(CONFIG_ZMK_SPLIT) || IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
     struct zmk_endpoint_instance selected_endpoint;
     int active_profile_index;
@@ -26,8 +29,8 @@ struct status_state {
     uint8_t layer_index;
     const char *layer_label;
     uint8_t wpm[10];
-    uint8_t peripheral_battery;
-    bool peripheral_charging;
+
+
 #else
     bool connected;
 #endif
