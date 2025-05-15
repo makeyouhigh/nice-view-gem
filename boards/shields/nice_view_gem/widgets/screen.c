@@ -94,7 +94,6 @@ static struct battery_status_state battery_status_get_state(const zmk_event_t *e
 //        .usb_present = zmk_usb_is_powered(),
 //#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
 //    };
-
     // ① Host 배터리 처리
     const struct zmk_battery_state_changed *hev = as_zmk_battery_state_changed(eh);
     uint8_t level = zmk_battery_state_of_charge();
