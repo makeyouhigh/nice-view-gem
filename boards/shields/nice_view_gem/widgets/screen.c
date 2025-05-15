@@ -133,7 +133,6 @@ static struct battery_status_state battery_status_get_state(const zmk_event_t *e
 }
 
 
-}
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_battery_status, struct battery_status_state,
                             battery_status_update_cb, battery_status_get_state);
