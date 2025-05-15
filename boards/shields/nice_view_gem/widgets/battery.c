@@ -30,14 +30,14 @@ static void draw_level_line(lv_obj_t *canvas, const char *label, uint8_t percent
 
 void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
     // 첫 줄: LBAT
-    draw_level_line(canvas, "LBAT", state->battery, state->charging,
+    draw_level_line(canvas, "BAT", state->battery, state->charging,
                     0, 6,   // label 위치
                     56, 6,  // percent 위치
                     62, 8); // bolt 아이콘 위치
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
     // 둘째 줄: RBAT
-    draw_level_line(canvas, "RBAT", state->peripheral_battery, state->peripheral_charging,
+    draw_level_line(canvas, "PBAT", state->peripheral_battery, state->peripheral_charging,
                     0, 24,
                     56, 24,
                     62, 26);
