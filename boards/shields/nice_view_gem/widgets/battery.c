@@ -6,10 +6,16 @@ LV_IMG_DECLARE(bolt);
 
 void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
     // 공통 스타일
-    static lv_draw_label_dsc_t dsc = LV_DRAW_LABEL_DSC_INIT();
-    static lv_draw_label_dsc_t label_dsc = LV_DRAW_LABEL_DSC_INIT();
-    static lv_draw_img_dsc_t img_dsc;
+
+    lv_draw_label_dsc_t dsc;
+    lv_draw_label_dsc_init(&dsc);
+    
+    lv_draw_label_dsc_t label_dsc;
+    lv_draw_label_dsc_init(&label_dsc);
+    
+    lv_draw_img_dsc_t img_dsc;
     lv_draw_img_dsc_init(&img_dsc);
+
 
     char buf[6] = {};
 
