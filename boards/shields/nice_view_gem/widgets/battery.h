@@ -8,11 +8,6 @@ struct battery_status_state {
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
     bool usb_present;
 #endif
-
-#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
-    uint8_t peripheral_level;
-    bool peripheral_charging;
-#endif
 };
 
 
