@@ -9,9 +9,11 @@ void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
 
     lv_draw_label_dsc_t dsc;
     lv_draw_label_dsc_init(&dsc);
+    dsc.font = &pixel_operator_mono;
     
     lv_draw_label_dsc_t label_dsc;
     lv_draw_label_dsc_init(&label_dsc);
+    label_dsc.font = &pixel_operator_mono;
     
     lv_draw_img_dsc_t img_dsc;
     lv_draw_img_dsc_init(&img_dsc);
