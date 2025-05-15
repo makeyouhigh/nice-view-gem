@@ -4,42 +4,46 @@
 
 LV_IMG_DECLARE(bolt);
 
-void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
-    // 공통 스타일
-
-    lv_draw_label_dsc_t dsc;
-    lv_draw_label_dsc_init(&dsc);
-    dsc.color = LVGL_FOREGROUND;
-    dsc.font = &pixel_operator_mono;
-    
-    lv_draw_label_dsc_t label_dsc;
-    lv_draw_label_dsc_init(&label_dsc);
-    label_dsc.color = LVGL_FOREGROUND;
-    label_dsc.font = &pixel_operator_mono;
-    
+static void draw_level_line(lv_obj_t *canvas, const char *label, uint8_t percent, bool charging,
+                            int x_label, int y_label, int x_text, int y_text, int x_bolt, int y_bolt) {
+    char text[10] = {};
+    lv_draw_label_dsc_t label_left_dsc;
+    lv_draw_label_dsc_t label_right_dsc;
     lv_draw_img_dsc_t img_dsc;
+
+    init_label_dsc(&label_left_dsc, LVGL_FOREGROUND, &pixel_operator_mono, LV_TEXT_ALIGN_LEFT);
+    init_label_dsc(&label_right_dsc, LVGL_FOREGROUND, &pixel_operator_mono, LV_TEXT_ALIGN_RIGHT);
     lv_draw_img_dsc_init(&img_dsc);
 
+    // Label (LBAT / RBAT)
+    lv_canvas_draw_text(canvas, x_label, y_label, 30, &label_left_dsc, label);
 
-    char buf[12] = {};
+    // Percentage
+    snprintf(text, sizeof(text), "%u%%", percent);
+    lv_canvas_draw_text(canvas, x_text, y_text, 35, &label_right_dsc, text);
 
-    // --- Host (왼쪽) ---
-    snprintf(buf, sizeof(buf), "BAT  %u%%", state->battery);
-    lv_canvas_draw_text(canvas, 0, 11, 64, &dsc, buf);            // 퍼센트
-
-    if (state->charging) {
-        lv_canvas_draw_img(canvas, 56, 11, &bolt, &img_dsc);       // 번개 아이콘
+    // Charging icon
+    if (charging) {
+        lv_canvas_draw_img(canvas, x_bolt, y_bolt, &bolt, &img_dsc);
     }
+}
+
+void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
+    // 첫 줄: LBAT
+    draw_level_line(canvas, "LBAT", state->battery, state->charging,
+                    0, 6,   // label 위치
+                    56, 6,  // percent 위치
+                    62, 8); // bolt 아이콘 위치
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
-    // --- Peripheral (오른쪽) ---
-    snprintf(buf, sizeof(buf), "RBAT %u%%", state->peripheral_battery);
-    lv_canvas_draw_text(canvas, 0, 28, 64, &dsc, buf);           // 퍼센트 (조정 가능)
-
-    if (state->peripheral_charging) {
-        lv_canvas_draw_img(canvas, 56, 28, &bolt, &img_dsc);      // 번개 아이콘
-    }
+    // 둘째 줄: RBAT
+    draw_level_line(canvas, "RBAT", state->peripheral_battery, state->peripheral_charging,
+                    0, 24,
+                    56, 24,
+                    62, 26);
 #endif
+}
+
 }
 
 
