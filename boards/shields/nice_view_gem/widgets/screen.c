@@ -86,14 +86,53 @@ static void battery_status_update_cb(struct battery_status_state state) {
 }
 
 static struct battery_status_state battery_status_get_state(const zmk_event_t *eh) {
-    const struct zmk_battery_state_changed *ev = as_zmk_battery_state_changed(eh);
+//    const struct zmk_battery_state_changed *ev = as_zmk_battery_state_changed(eh);
+//
+//    return (struct battery_status_state){
+//        .level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge(),
+//#if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
+//        .usb_present = zmk_usb_is_powered(),
+//#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+//    };
 
-    return (struct battery_status_state){
-        .level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge(),
+    // ① Host 배터리 처리
+    const struct zmk_battery_state_changed *hev = as_zmk_battery_state_changed(eh);
+    uint8_t level = zmk_battery_state_of_charge();
+    if (hev) {
+        level = hev->state_of_charge;
+    }
+    bool usb_present = false;
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-        .usb_present = zmk_usb_is_powered(),
-#endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+    usb_present = zmk_usb_is_powered();
+#endif
+
+    // ② Peripheral 배터리 처리 (충전 정보는 제공되지 않음)
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+    static uint8_t peripheral_level = 0;
+    if (const struct zmk_peripheral_battery_state_changed *pev =
+            as_zmk_peripheral_battery_state_changed(eh)) {
+        peripheral_level = pev->state_of_charge;
+    }
+#else
+    static uint8_t peripheral_level = 0;
+#endif
+
+    // ③ 결과 반환 (host + peripheral)
+    return (struct battery_status_state){
+        .level               = level,
+        .usb_present         = usb_present,
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+        .peripheral_level    = peripheral_level,
+        .peripheral_charging = false,  // 이벤트에 충전 플래그 없음
+#endif
     };
+}
+
+    
+
+
+
+
 }
 
 ZMK_DISPLAY_WIDGET_LISTENER(widget_battery_status, struct battery_status_state,
@@ -103,6 +142,9 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_battery_state_changed);
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
 ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+ZMK_SUBSCRIPTION(widget_battery_status, zmk_peripheral_battery_state_changed);
+#endif
 
 /**
  * Layer status
