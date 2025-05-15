@@ -119,7 +119,7 @@ static void draw_label(lv_obj_t *canvas, const struct status_state *state) {
     char wpm_text[6] = {};
 
     snprintf(wpm_text, sizeof(wpm_text), "%d", state->wpm[9]);
-    lv_canvas_draw_text(canvas, 26, 101 + BUFFER_OFFSET_MIDDLE, 42, &label_dsc_wpm, wpm_text);
+    lv_canvas_draw_text(canvas, 26, 107 + BUFFER_OFFSET_MIDDLE, 42, &label_dsc_wpm, wpm_text);
 }
 
 void draw_wpm_status(lv_obj_t *canvas, const struct status_state *state) {
