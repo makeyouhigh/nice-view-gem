@@ -106,31 +106,31 @@ static struct battery_status_state battery_status_get_state(const zmk_event_t *e
     usb_present = zmk_usb_is_powered();
 #endif
 
-    // ② Peripheral 배터리 처리 (충전 정보는 제공되지 않음)
+    // ② Peripheral 배터리 처리 (충전 정보 없음)
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
     static uint8_t peripheral_level = 0;
-    if (const struct zmk_peripheral_battery_state_changed *pev =
-            as_zmk_peripheral_battery_state_changed(eh)) {
-        peripheral_level = pev->state_of_charge;
+    {
+        /* 변수 선언을 if 밖으로 분리 */
+        const struct zmk_peripheral_battery_state_changed *pev;
+        pev = as_zmk_peripheral_battery_state_changed(eh);
+        if (pev) {
+            peripheral_level = pev->state_of_charge;
+        }
     }
 #else
     static uint8_t peripheral_level = 0;
 #endif
 
-    // ③ 결과 반환 (host + peripheral)
+    // ③ 결과 반환
     return (struct battery_status_state){
         .level               = level,
         .usb_present         = usb_present,
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
         .peripheral_level    = peripheral_level,
-        .peripheral_charging = false,  // 이벤트에 충전 플래그 없음
+        .peripheral_charging = false,
 #endif
     };
 }
-
-    
-
-
 
 
 }
