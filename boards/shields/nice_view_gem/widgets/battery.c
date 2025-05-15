@@ -21,25 +21,23 @@ void draw_battery_status(lv_obj_t *canvas, const struct status_state *state) {
     lv_draw_img_dsc_init(&img_dsc);
 
 
-    char buf[6] = {};
+    char buf[12] = {};
 
     // --- Host (왼쪽) ---
-    snprintf(buf, sizeof(buf), "%u%%", state->battery);
-    lv_canvas_draw_text(canvas, 12, 19, 30, &dsc, buf);            // 퍼센트
-    lv_canvas_draw_text(canvas, 0, 19, 10, &label_dsc, "L");       // L 라벨
+    snprintf(buf, sizeof(buf), "BAT  %u%%", state->battery);
+    lv_canvas_draw_text(canvas, 0, 11, 64, &dsc, buf);            // 퍼센트
 
     if (state->charging) {
-        lv_canvas_draw_img(canvas, 44, 21, &bolt, &img_dsc);       // 번개 아이콘
+        lv_canvas_draw_img(canvas, 56, 11, &bolt, &img_dsc);       // 번개 아이콘
     }
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
     // --- Peripheral (오른쪽) ---
-    snprintf(buf, sizeof(buf), "%u%%", state->peripheral_battery);
-    lv_canvas_draw_text(canvas, 52, 19, 30, &dsc, buf);           // 퍼센트 (조정 가능)
-    lv_canvas_draw_text(canvas, 42, 19, 10, &label_dsc, "R");      // R 라벨
+    snprintf(buf, sizeof(buf), "RBAT %u%%", state->peripheral_battery);
+    lv_canvas_draw_text(canvas, 0, 28, 64, &dsc, buf);           // 퍼센트 (조정 가능)
 
     if (state->peripheral_charging) {
-        lv_canvas_draw_img(canvas, 64, 21, &bolt, &img_dsc);      // 번개 아이콘
+        lv_canvas_draw_img(canvas, 56, 28, &bolt, &img_dsc);      // 번개 아이콘
     }
 #endif
 }
