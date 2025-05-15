@@ -76,6 +76,13 @@ static void set_battery_status(struct zmk_widget_screen *widget,
     widget->state.charging = state.usb_present;
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
     widget->state.battery = state.level;
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY)
+    widget->state.peripheral_battery = state.peripheral_level;
+    widget->state.peripheral_charging = state.peripheral_charging;
+#endif
+    draw_top(widget->obj, widget->cbuf, &widget->state);
+}
+
 
     draw_top(widget->obj, widget->cbuf, &widget->state);
 }
