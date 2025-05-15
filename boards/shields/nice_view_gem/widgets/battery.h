@@ -15,6 +15,5 @@ struct battery_status_state {
 #endif
 };
 
-};
 
 void draw_battery_status(lv_obj_t *canvas, const struct status_state *state);
